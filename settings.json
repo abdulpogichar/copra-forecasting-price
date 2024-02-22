@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "C:/Users/williiam butcher oi/Desktop/LAST/black-dashboard-flask-master/black-dashboard-flask-master"
+    ],
+    "python.linting.pylintEnabled": true
+}

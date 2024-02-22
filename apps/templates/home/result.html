@@ -1,0 +1,39 @@
+<!-- templates/result.html -->
+
+{% extends "layouts/base.html" %}
+
+{% block title %} Time Series Prediction Result {% endblock title %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card mt-5">
+          <div class="card-header">
+            <h4 class="card-title">Time Series Prediction Result</h4>
+          </div>
+          <div class="card-body">
+            <div class="container-1">
+              <h1 class="mt-4">Prediction Result</h1>
+
+              <p id="predictions">
+                {% if prediction %}
+                  <strong>Prediction Result is PHP:</strong> {{ prediction }}
+                {% endif %}
+              </p>
+
+              <a href="/" class="btn btn-primary">Back to Forecast</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  <!-- Include Bootstrap libraries -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{% endblock javascripts %}

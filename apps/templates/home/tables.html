@@ -1,0 +1,56 @@
+<!-- templates/tables.html -->
+
+{% extends "layouts/base.html" %}
+
+{% block title %} NESCAFE Time Series Prediction {% endblock title %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Coconut Copra Time Series Prediction</h4>
+          </div>
+          <div class="card-body">
+            <div class="container-1">
+              <h1 class="mt-4">Time Series Prediction</h1>
+
+              <form id="predictionForm" method="POST" action="/predict">
+                <div class="form-group">
+                  <label for="day">Day:</label>
+                  <input type="number" class="form-control" id="day" name="day" placeholder="Day" required min="1" max="31">
+                </div>
+
+                <div class="form-group">
+                  <label for="month">Month:</label>
+                  <input type="number" class="form-control" id="month" name="month" placeholder="Month" required min="1" max="12">
+                </div>
+
+                <div class="form-group">
+                  <label for="year">Year:</label>
+                  <input type="number" class="form-control" id="year" name="year" placeholder="Year" required min ="2022" max="2100">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Predict</button>
+              </form>
+
+              <p id="predictions">
+                {% if prediction %}
+                  <strong>Prediction Result:</strong> {{ prediction }}
+                {% endif %}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  <!-- Include Bootstrap libraries -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{% endblock javascripts %}

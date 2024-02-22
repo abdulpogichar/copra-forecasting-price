@@ -1,0 +1,135 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Notifications {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="content">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">PCA UPDATES</h4>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info">
+              <span>Price Alerts</span>
+            </div>
+            <div class="alert alert-info">
+              <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+              <span>Market Trends</span>
+            </div>
+            <div class="alert alert-info alert-with-icon" data-notify="container">
+              <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+              <span data-notify="icon" class="tim-icons icon-bell-55"></span>
+              <span data-notify="message">Weather Updates</span>
+            </div>
+            <div class="alert alert-info alert-with-icon" data-notify="container">
+              <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+              <span data-notify="icon" class="tim-icons icon-bell-55"></span>
+              <span data-notify="message">Harvesting Season Reminders.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Government Policies and Regulations</h4>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-primary">
+              <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+              <span><b> Primary - </b> Global Events</span>
+            </div>
+            <div class="alert alert-info">
+              <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+              <span><b> Info - </b> Supply Chain Updates</span>
+            </div>
+            <div class="alert alert-success">
+              <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+              <span><b> Success - </b> News and Analysis</span>
+            </div>
+            <div class="alert alert-warning">
+              <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+              <span><b> Warning - </b>Forecast Updates</span>
+            </div>
+            <div class="alert alert-danger">
+              <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+              <span><b> Danger - </b> Mobile and Email Notifications</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="places-buttons">
+              <div class="row">
+                <div class="col-md-6 ml-auto mr-auto text-center">
+                  <h4 class="card-title">
+                    ENDS HERE
+                    <p class="category">?___?</p>
+                  </h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-8 ml-auto mr-auto">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <button class="btn btn-primary btn-block" onclick="demo.showNotification('top','left')">1</button>
+                    </div>
+                    <div class="col-md-4">
+                      <button class="btn btn-primary btn-block" onclick="demo.showNotification('top','center')">2</button>
+                    </div>
+                    <div class="col-md-4">
+                      <button class="btn btn-primary btn-block" onclick="demo.showNotification('top','right')">3</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-8 ml-auto mr-auto">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <button class="btn btn-primary btn-block" onclick="demo.showNotification('bottom','left')">4</button>
+                    </div>
+                    <div class="col-md-4">
+                      <button class="btn btn-primary btn-block" onclick="demo.showNotification('bottom','center')">5</button>
+                    </div>
+                    <div class="col-md-4">
+                      <button class="btn btn-primary btn-block" onclick="demo.showNotification('bottom','right')">6</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
