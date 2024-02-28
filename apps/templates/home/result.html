@@ -18,11 +18,18 @@
 
               <p id="predictions">
                 {% if prediction %}
-                  <strong>Prediction Result is PHP:</strong> {{ prediction }}
+                  <strong>Prediction Result (PHP per kg):</strong> {{ prediction }}
                 {% endif %}
               </p>
 
-              <a href="/" class="btn btn-primary">Back to Forecast</a>
+              {% if weather %}
+                <h5>Weather Forecast:</h5>
+                <p class="lead">Temperature: {{ weather.data[0].temp }}°C</p>
+                <p class="lead">Description: {{ weather.data[0].weather.description }}</p>
+                <!-- Add more weather information as needed -->
+              {% endif %}
+
+              <a href="/" class="btn btn-primary mt-3">Back to Forecast</a>
             </div>
           </div>
         </div>

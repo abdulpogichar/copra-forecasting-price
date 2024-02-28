@@ -1,119 +1,90 @@
+<!-- templates/home/result.html -->
 {% extends "layouts/base.html" %}
 
-{% block title %} Dashboard {% endblock %}
+{% block title %} Prediction Result {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+    <!-- Add any specific stylesheets for the result page if needed -->
+{% endblock stylesheets %}
 
 {% block content %}
 
     <div class="content">
-        <div class="row">
-            <div class="col-12">
-                <div class="card card-chart">
-                    <div class="card-header ">
-                        <div class="row">
-                            <div class="col-sm-6 text-left">
-                                <h5 class="card-category">COPRA PRICE TODAY</h5>
-                                <h2 class="card-title">PRICE</h2>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
-                                    <label class="btn btn-sm btn-primary btn-simple active" id="0">
-                                        <input type="radio" name="options" checked>
-                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Accounts</span>
-                                        <span class="d-block d-sm-none">
-                        <i class="tim-icons icon-single-02"></i>
-                    </span>
-                                    </label>
-                                    <label class="btn btn-sm btn-primary btn-simple" id="1">
-                                        <input type="radio" class="d-none d-sm-none" name="options">
-                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">PREDICTIONS</span>
-                                        <span class="d-block d-sm-none">
-                        <i class="tim-icons icon-gift-2"></i>
-                    </span>
-                                    </label>
-                                    <label class="btn btn-sm btn-primary btn-simple" id="2">
-                                        <input type="radio" class="d-none" name="options">
-                                        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Sessions</span>
-                                        <span class="d-block d-sm-none">
-                        <i class="tim-icons icon-tap-02"></i>
-                    </span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-area">
-                            <canvas id="chartBig1"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-4">
+        <div class="row col-5">
+            <div class="col-10">
                 <div class="card card-chart">
                     <div class="card-header">
-                        <h5 class="card-category">OIL MADE</h5>
-                        <h3 class="card-title"><i class="tim-icons icon-bell-55 text-primary"></i> 763,215</h3>
+                        <h5 class="card-category">Price Chart</h5>
+                        <h2 class="card-title"></h2>
                     </div>
                     <div class="card-body">
                         <div class="chart-area">
-                            <canvas id="chartLinePurple"></canvas>
+                            <canvas id="predictionChart"></canvas>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card card-chart">
-                    <div class="card-header">
-                        <h5 class="card-category">Daily PRICE</h5>
-                        <h3 class="card-title"><i class="tim-icons icon-delivery-fast text-info"></i> PHP 37</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-area">
-                            <canvas id="CountryChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card card-chart">
-                    <div class="card-header">
-                        <h5 class="card-category">PAST PREDICTION</h5>
-                        <h3 class="card-title"><i class="tim-icons icon-send text-success"></i> PHP 19</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-area">
-                            <canvas id="chartLineGreen"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6 col-md-12">
-
-            </div>
-            <div class="col-lg-6 col-md-12">
             </div>
         </div>
     </div>
 
 {% endblock content %}
 
+<!-- Include Chart.js -->   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
 <script>
-    $(document).ready(function () {
-        // Javascript method's body can be found in assets/js/demos.js
-        demo.initDashboardPageCharts();
+    // Extracted chart creation function
+    function createChart(data) {
+        var chartData = {
+            labels: data.map(entry => entry.DATE),
+            datasets: [{
+                label: 'COPRA PRICE',
+                data: data.map(entry => parseFloat(entry.PRICE)),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false
+            }]
+        };
 
-    });
+        var chartOptions = {
+            responsive: true,
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Price'
+                    }
+                }
+            }
+        };
+
+        // Create a line chart using Chart.js
+        var ctx = document.getElementById('predictionChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions
+        });
+    }
+
+    // Fetch prediction data from Flask route
+    fetch('/get_prediction_data')
+        .then(response => response.json())
+        .then(data => {
+            createChart(data);
+        })
+        .catch(error => console.error('Error fetching prediction data:', error));
+
 </script>
-
 
 {% endblock javascripts %}

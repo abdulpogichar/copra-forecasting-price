@@ -1,12 +1,17 @@
 import pandas as pd
 import joblib
 import os
+import requests
 from flask_migrate import Migrate
 from flask_minify import Minify
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, abort
 from apps.config import config_dict
 from apps import create_app, db
 from models.models import TimeSeriesRandomForestRegressor
+from weatherbit.api import Api
+
+api = Api('d784a4b36f034f7cb387201196c69cc6')
+WEATHERBIT_API_KEY = 'd784a4b36f034f7cb387201196c69cc6'
 
 # WARNING: Don't run with debug turned on in production!
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
@@ -38,7 +43,24 @@ rf_model = TimeSeriesRandomForestRegressor()
 model_fitted = False
 feature_columns = None  # Initialize feature_columns outside the block
 
-from flask import abort
+# Function to fetch future weather data from Weatherbit API
+def get_weather_data(date):
+    try:
+        lat_zamboanga = 6.9214
+        lon_zamboanga = 122.0790
+
+        api_url = f'https://api.weatherbit.io/v2.0/forecast/daily?key={WEATHERBIT_API_KEY}&lat={lat_zamboanga}&lon={lon_zamboanga}&start_date={date}&days=16'
+
+        # Make the API request
+        response = requests.get(api_url)
+        response.raise_for_status()
+        weather_data = response.json()
+
+        return weather_data
+
+    except requests.exceptions.RequestException as e:
+        print(f'Error fetching weather data: {e}')
+        return None
 
 @app.route('/')
 def render_form():
@@ -50,6 +72,22 @@ def render_prediction_result():
     if not os.path.exists(os.path.join(app.root_path, 'templates', template_path)):
         abort(404)  # Return a 404 error if the template doesn't exist
     return render_template(template_path)
+
+# New route to serve prediction data
+@app.route('/get_prediction_data')
+def get_prediction_data():
+    
+    sample_prediction_data = [
+        {"DATE": "2022-01-01", "PRICE": 33.24},
+        {"DATE": "2022-01-02", "PRICE": 33.45},
+        {"DATE": "2022-01-07", "PRICE": 34.45},
+        {"DATE": "2022-01-12", "PRICE": 39.45},
+        {"DATE": "2022-01-07", "PRICE": 34.45},
+        # ... (more data)
+    ]
+
+    return jsonify(sample_prediction_data)
+
 # Predict route
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -107,11 +145,13 @@ def predict():
         # Perform prediction using the loaded/fitted model
         prediction = rf_model.predict(X[feature_columns])
 
-        response = {'prediction': prediction.tolist()}
+        # Call Weatherbit API to get forecasted weather information
+        weather_data = get_weather_data(date)
 
-        # Render the prediction result template with the prediction
-        return render_template('home/result.html', prediction=prediction.tolist())
+        response = {'prediction': prediction.tolist(), 'weather': weather_data}
 
+        # Render the prediction result template with the prediction and weather information
+        return render_template('home/result.html', prediction=response['prediction'], weather=response['weather'])
 
     except Exception as e:
         import traceback
