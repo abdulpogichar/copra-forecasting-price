@@ -6,13 +6,19 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
     <!-- Add any specific stylesheets for the result page if needed -->
+    <style>
+        canvas {
+            max-width: 100%; /* Make the chart responsive to the container width */
+            margin: 20px 0; /* Add some margin for better spacing */
+        }
+    </style>
 {% endblock stylesheets %}
 
 {% block content %}
 
     <div class="content">
-        <div class="row col-5">
-            <div class="col-10">
+        <div class="row">
+            <div class="col-md-12">
                 <div class="card card-chart">
                     <div class="card-header">
                         <h5 class="card-category">Price Chart</h5>
@@ -30,60 +36,96 @@
 
 {% endblock content %}
 
-<!-- Include Chart.js -->   
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
 <script>
-    // Extracted chart creation function
-    function createChart(data) {
-        var chartData = {
-            labels: data.map(entry => entry.DATE),
-            datasets: [{
-                label: 'COPRA PRICE',
-                data: data.map(entry => parseFloat(entry.PRICE)),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 2,
-                fill: false
-            }]
-        };
-
-        var chartOptions = {
-            responsive: true,
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'day'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Price'
-                    }
-                }
+    // Function to fetch prediction data from Flask route
+    async function fetchPredictionData() {
+        try {
+            const response = await fetch('/get_prediction_data');
+            if (!response.ok) {
+                throw new Error('Error fetching prediction data');
             }
-        };
-
-        // Create a line chart using Chart.js
-        var ctx = document.getElementById('predictionChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: chartData,
-            options: chartOptions
-        });
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
-    // Fetch prediction data from Flask route
-    fetch('/get_prediction_data')
-        .then(response => response.json())
-        .then(data => {
-            createChart(data);
-        })
-        .catch(error => console.error('Error fetching prediction data:', error));
+    // Function to create and update the chart
+    async function createChart() {
+        try {
+            // Fetch prediction data from Flask route
+            const data = await fetchPredictionData();
+
+            // Chart configuration
+            const chartConfig = {
+                type: 'line',
+                data: {
+                    labels: data.map(entry => entry.DATE),
+                    datasets: [{
+                        label: 'COPRA PRICE',
+                        data: data.map(entry => parseFloat(entry.PRICE)),
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                displayFormats: {
+                                    day: 'MMM D'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Price (PHP per kg)'
+                            },
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    }
+                }
+            };
+
+            // Get chart canvas and create Chart instance
+            const ctx = document.getElementById('predictionChart').getContext('2d');
+            const myChart = new Chart(ctx, chartConfig);
+
+        } catch (error) {
+            console.error('Error creating chart:', error);
+        }
+    }
+
+    // Call createChart function when the page loads
+    document.addEventListener('DOMContentLoaded', createChart);
 
 </script>
 

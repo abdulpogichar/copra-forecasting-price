@@ -32,6 +32,15 @@
                     <label for="year">Year:</label>
                     <input type="number" class="form-control" id="year" name="year" placeholder="Year" required min="2022" max="2100">
                   </div>
+
+                  <div class="form-group col-md-3">
+                    <label for="harvestType">Select Harvest Type:</label>
+                    <select class="form-control" id="harvestType" name="harvestType" style="padding-top: 6px" required>
+                        <option value="lean" style="font-size: 12px;">Peak Harvest</option>
+                        <option value="peak" style="font-size: 12px;">Lean Harvest</option>
+                    </select>
+                </div>
+
                 </div>
 
                 <button type="submit" class="btn btn-primary">Predict</button>

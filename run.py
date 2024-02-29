@@ -13,7 +13,6 @@ from weatherbit.api import Api
 api = Api('d784a4b36f034f7cb387201196c69cc6')
 WEATHERBIT_API_KEY = 'd784a4b36f034f7cb387201196c69cc6'
 
-# WARNING: Don't run with debug turned on in production!
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 
 # The configuration
@@ -73,17 +72,32 @@ def render_prediction_result():
         abort(404)  # Return a 404 error if the template doesn't exist
     return render_template(template_path)
 
-# New route to serve prediction data
+
 @app.route('/get_prediction_data')
 def get_prediction_data():
-    
+
     sample_prediction_data = [
-        {"DATE": "2022-01-01", "PRICE": 33.24},
-        {"DATE": "2022-01-02", "PRICE": 33.45},
-        {"DATE": "2022-01-07", "PRICE": 34.45},
-        {"DATE": "2022-01-12", "PRICE": 39.45},
-        {"DATE": "2022-01-07", "PRICE": 34.45},
-        # ... (more data)
+        {"DATE": "2017-01-31", "PRICE": 38},
+        {"DATE": "2017-04-30", "PRICE": 40},
+        {"DATE": "2017-07-31", "PRICE": 40},
+        {"DATE": "2017-10-31", "PRICE": 41},
+        {"DATE": "2018-01-31", "PRICE": 40},
+        {"DATE": "2018-04-30", "PRICE": 40},
+        {"DATE": "2018-07-31", "PRICE": 32},
+        {"DATE": "2018-10-31", "PRICE": 29},
+        {"DATE": "2019-01-31", "PRICE": 28},
+        {"DATE": "2019-04-30", "PRICE": 25},
+        {"DATE": "2017-01-31", "PRICE": 24},
+        {"DATE": "2017-04-30", "PRICE": 23},
+        {"DATE": "2017-07-31", "PRICE": 24},
+        {"DATE": "2017-10-31", "PRICE": 27},
+        {"DATE": "2018-01-31", "PRICE": 26},
+        {"DATE": "2018-04-30", "PRICE": 33.},
+        {"DATE": "2018-07-31", "PRICE": 37.},
+        {"DATE": "2018-10-31", "PRICE": 34.},
+        {"DATE": "2019-01-31", "PRICE": 40},
+        {"DATE": "2019-04-30", "PRICE": 41},
+
     ]
 
     return jsonify(sample_prediction_data)
@@ -102,7 +116,7 @@ def predict():
         month = data.get('month')
         year = data.get('year')
 
-        # Validate that the date is provided
+
         if day is None or month is None or year is None:
             raise ValueError("Missing required values for day, month, and year")
 
@@ -121,7 +135,7 @@ def predict():
 
         # Check if the model is already fitted
         if not model_fitted:
-            # Load training data from CSV file
+
             csv_file_path = r'C:\Users\williiam butcher oi\Desktop\LAST\ThesisTrialv1-master\models\processed.csv'
             df = pd.read_csv(csv_file_path)
 
@@ -132,13 +146,13 @@ def predict():
             X_train = df[feature_columns]
             y_train = df[target_column]
 
-            # Fit the model with training data
+
             rf_model.fit(X_train, y_train)
 
-            # Update the model_fitted flag
+
             model_fitted = True
 
-        # Print feature names for debugging
+
         print("Training Feature Columns:", feature_columns)
         print("Prediction Feature Columns:", X.columns)
 
