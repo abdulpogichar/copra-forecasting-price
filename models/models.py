@@ -1,6 +1,5 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
-from xgboost import XGBRegressor
 from sklearn.base import clone
 
 import numpy as np
