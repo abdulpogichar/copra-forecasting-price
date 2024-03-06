@@ -136,7 +136,8 @@ def predict():
         # Check if the model is already fitted
         if not model_fitted:
 
-            csv_file_path = r'C:\Users\williiam butcher oi\Desktop\LAST\ThesisTrialv1-master\models\processed.csv'
+            csv_file_path = 'models/processed.csv'
+
             df = pd.read_csv(csv_file_path)
 
             # Ensure the correct order and names of columns in X_train
