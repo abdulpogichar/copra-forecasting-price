@@ -16,11 +16,21 @@
             <div class="container-1">
               <h1 class="mt-4">Prediction Result</h1>
 
-              <p id="predictions">
-                {% if prediction %}
-                  <strong>Prediction Result (PHP per kg):</strong> {{ prediction }}
+              {% if prediction_classification or prediction_regression %}
+                {% if prediction_classification %}
+                  <p id="classification_prediction">
+                    <strong>Harvest Season Prediction:</strong> {{ prediction_classification[0] }}
+                  </p>
                 {% endif %}
-              </p>
+
+                {% if prediction_regression %}
+                  <p id="regression_prediction">
+                    <strong>Price Prediction (PHP per kg):</strong> {{ prediction_regression[0] }}
+                  </p>
+                {% endif %}
+              {% else %}
+                <p>No predictions available.</p>
+              {% endif %}
 
               {% if weather %}
                 <h5>Weather Forecast:</h5>

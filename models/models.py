@@ -1,23 +1,29 @@
+# custom_models.py
+
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.base import clone
-
-import numpy as np
-import joblib
 
 class TimeSeriesRandomForestRegressor(RandomForestRegressor):
     def fit(self, X, y):
-        # Assuming X is a DataFrame
+        # Extract feature names
         self.feature_names_ = X.columns.tolist()
-        super().fit(X, y)
+
+        # Ensure data is sorted by date before fitting
+        X_sorted = X.sort_values(by=self.feature_names_)
+        y_sorted = y[X_sorted.index]
+
+        super().fit(X_sorted, y_sorted)
 
     def predict(self, X):
         try:
             # Ensure the order of features is correct
-            X = X[self.feature_names_]
-            predicted = super().predict(X)
+            X_ordered = X[self.feature_names_]
+
+            # Perform prediction using the loaded/fitted model
+            predicted = super().predict(X_ordered)
             return predicted
+
         except ValueError as ve:
             print("Error during prediction:", ve)
-            print("Provided Feature Columns:", X.columns.tolist())
+            print("Provided Feature Columns:", X_ordered.columns.tolist())
             raise ve

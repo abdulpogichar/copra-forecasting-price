@@ -9,6 +9,10 @@ from apps.config import config_dict
 from apps import create_app, db
 from models.models import TimeSeriesRandomForestRegressor
 from weatherbit.api import Api
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder
 
 api = Api('d784a4b36f034f7cb387201196c69cc6')
 WEATHERBIT_API_KEY = 'd784a4b36f034f7cb387201196c69cc6'
@@ -36,9 +40,14 @@ if DEBUG:
     app.logger.info('DBMS        = ' + app_config.SQLALCHEMY_DATABASE_URI)
     app.logger.info('ASSETS_ROOT = ' + app_config.ASSETS_ROOT)
 
-rf_model = TimeSeriesRandomForestRegressor()
+# Update this line with the correct path
+combined_model_path = 'models/combined_model.pkl'
 
-# Check if the model is already fitted or not
+# Load the combined model
+loaded_combined_model = joblib.load(combined_model_path)
+
+
+# Check if the models are already fitted or not
 model_fitted = False
 feature_columns = None  # Initialize feature_columns outside the block
 
@@ -72,35 +81,11 @@ def render_prediction_result():
         abort(404)  # Return a 404 error if the template doesn't exist
     return render_template(template_path)
 
+# Other routes...
 
-@app.route('/get_prediction_data')
-def get_prediction_data():
+# ... (your existing imports)
 
-    sample_prediction_data = [
-        {"DATE": "2017-01-31", "PRICE": 38},
-        {"DATE": "2017-04-30", "PRICE": 40},
-        {"DATE": "2017-07-31", "PRICE": 40},
-        {"DATE": "2017-10-31", "PRICE": 41},
-        {"DATE": "2018-01-31", "PRICE": 40},
-        {"DATE": "2018-04-30", "PRICE": 40},
-        {"DATE": "2018-07-31", "PRICE": 32},
-        {"DATE": "2018-10-31", "PRICE": 29},
-        {"DATE": "2019-01-31", "PRICE": 28},
-        {"DATE": "2019-04-30", "PRICE": 25},
-        {"DATE": "2017-01-31", "PRICE": 24},
-        {"DATE": "2017-04-30", "PRICE": 23},
-        {"DATE": "2017-07-31", "PRICE": 24},
-        {"DATE": "2017-10-31", "PRICE": 27},
-        {"DATE": "2018-01-31", "PRICE": 26},
-        {"DATE": "2018-04-30", "PRICE": 33.},
-        {"DATE": "2018-07-31", "PRICE": 37.},
-        {"DATE": "2018-10-31", "PRICE": 34.},
-        {"DATE": "2019-01-31", "PRICE": 40},
-        {"DATE": "2019-04-30", "PRICE": 41},
-
-    ]
-
-    return jsonify(sample_prediction_data)
+# Other routes...
 
 # Predict route
 @app.route('/predict', methods=['POST'])
@@ -115,7 +100,6 @@ def predict():
         day = data.get('day')
         month = data.get('month')
         year = data.get('year')
-
 
         if day is None or month is None or year is None:
             raise ValueError("Missing required values for day, month, and year")
@@ -133,45 +117,44 @@ def predict():
         # Create a feature matrix (a DataFrame) for prediction
         X = pd.DataFrame({'day': [date.day], 'month': [date.month], 'year': [date.year]})
 
-        # Check if the model is already fitted
+        # Check if the models are already fitted
         if not model_fitted:
-
-            csv_file_path = 'models/processed.csv'
-
-            df = pd.read_csv(csv_file_path)
-
-            # Ensure the correct order and names of columns in X_train
-            feature_columns = ['day', 'month', 'year']
-            target_column = 'PRICE (PHP per kg)'
-
-            X_train = df[feature_columns]
-            y_train = df[target_column]
-
-
-            rf_model.fit(X_train, y_train)
-
-
             model_fitted = True
 
-
-        print("Training Feature Columns:", feature_columns)
-        print("Prediction Feature Columns:", X.columns)
-
         # Perform prediction using the loaded/fitted model
-        prediction = rf_model.predict(X[feature_columns])
+        prediction_classification = loaded_combined_model['classification_model'].predict(X)
+        prediction_regression = loaded_combined_model['regression_model'].predict(X)
 
         # Call Weatherbit API to get forecasted weather information
         weather_data = get_weather_data(date)
 
-        response = {'prediction': prediction.tolist(), 'weather': weather_data}
+        # Extract the predicted price and harvest season from your models
+        predicted_price = prediction_regression[0]  # Adjust this according to your model output
+        predicted_harvest_season = prediction_classification[0]  # Adjust this according to your model output
+
+        response = {
+            'prediction_classification': prediction_classification.tolist(),
+            'prediction_regression': prediction_regression.tolist(),
+            'weather': weather_data,
+            'predicted_price': predicted_price,
+            'predicted_harvest_season': predicted_harvest_season
+        }
 
         # Render the prediction result template with the prediction and weather information
-        return render_template('home/result.html', prediction=response['prediction'], weather=response['weather'])
+        return render_template('home/result.html',
+                               prediction_classification=response['prediction_classification'],
+                               prediction_regression=response['prediction_regression'],
+                               weather=response['weather'],
+                               predicted_price=response['predicted_price'],
+                               predicted_harvest_season=response['predicted_harvest_season'])
 
     except Exception as e:
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)})
+
+# ... (the rest of your Flask app code)
+
 
 if __name__ == "__main__":
     app.run()
