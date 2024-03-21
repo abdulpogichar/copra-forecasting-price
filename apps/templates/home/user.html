@@ -74,7 +74,7 @@
                 <div class="col-md-12">
                   <div class="form-group">
                     <label>Address</label>
-                    <input type="text" class="form-control" placeholder="Home Address" value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09">
+                    <input type="text" class="form-control" placeholder="Home Address" value="zamboanga">
                   </div>
                 </div>
               </div>
@@ -102,7 +102,7 @@
                 <div class="col-md-8">
                   <div class="form-group">
                     <label>About Me</label>
-                    <textarea rows="4" cols="80" class="form-control" placeholder="Here can be your description" value="Mike">Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.</textarea>
+                    <textarea rows="4" cols="80" class="form-control" placeholder="Here can be your description" value="Mike"></textarea>
                   </div>
                 </div>
               </div>
@@ -120,5 +120,45 @@
 
 {% endblock content %}
 
-<!-- Specific Page JS goes HERE  -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Get the form element
+    const form = document.querySelector('form');
+
+    // Add an event listener for form submission
+    form.addEventListener('submit', function(event) {
+      // Prevent the default form submission behavior
+      event.preventDefault();
+
+      // Serialize form data into JSON format
+      const formData = {};
+      const formInputs = form.querySelectorAll('input, textarea');
+      formInputs.forEach(input => {
+        formData[input.name] = input.value;
+      });
+
+      // Send form data to the Flask route using fetch API
+      fetch('/save-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Handle response from the server
+        if (data.success) {
+          alert('Profile saved successfully!');
+        } else {
+          alert('Error saving profile. Please try again.');
+        }
+      })
+      .catch(error => {
+        console.error('Error saving profile:', error);
+        alert('An error occurred while saving your profile.');
+      });
+    });
+  });
+</script>
 {% block javascripts %}{% endblock javascripts %}

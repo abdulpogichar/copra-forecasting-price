@@ -13,9 +13,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
-
-api = Api('d784a4b36f034f7cb387201196c69cc6')
-WEATHERBIT_API_KEY = 'd784a4b36f034f7cb387201196c69cc6'
+from flask import request
+api = Api('645bbb75279f43629698ed4a2f29a51b')
+WEATHERBIT_API_KEY = '645bbb75279f43629698ed4a2f29a51b'
 
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 
@@ -74,6 +74,42 @@ def get_weather_data(date):
 def render_form():
     return render_template('tables.html')
 
+from flask import request
+
+@app.route('/save-profile', methods=['POST'])
+def save_profile():
+    try:
+        # Get form data
+        email = request.form.get('email')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        address = request.form.get('address')
+        city = request.form.get('city')
+        country = request.form.get('country')
+        postal_code = request.form.get('postal_code')
+        about_me = request.form.get('about_me')
+
+        # Update the user's information in the database (assuming you have a User model)
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user.first_name = first_name
+            user.last_name = last_name
+            user.address = address
+            user.city = city
+            user.country = country
+            user.postal_code = postal_code
+            user.about_me = about_me
+
+            db.session.commit()
+
+            return jsonify({'success': True})
+        else:
+            return jsonify({'error': 'User not found'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+
 @app.route('/prediction-result')
 def render_prediction_result():
     template_path = 'result.html'
@@ -90,7 +126,7 @@ def render_prediction_result():
 # Predict route
 @app.route('/predict', methods=['POST'])
 def predict():
-    global model_fitted, feature_columns  # Declare model_fitted and feature_columns as global
+    global model_fitted, feature_columnsv
 
     try:
         # Get form data

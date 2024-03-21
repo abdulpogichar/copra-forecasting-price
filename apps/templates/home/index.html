@@ -7,9 +7,12 @@
 {% block stylesheets %}
     <!-- Add any specific stylesheets for the result page if needed -->
     <style>
-        canvas {
-            max-width: 100%; /* Make the chart responsive to the container width */
-            margin: 20px 0; /* Add some margin for better spacing */
+        /* Add custom styles here if necessary */
+        .system-info {
+            margin-bottom: 20px;
+        }
+        .system-info h5 {
+            margin-bottom: 10px;
         }
     </style>
 {% endblock stylesheets %}
@@ -19,14 +22,40 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card card-chart">
+                <div class="card">
                     <div class="card-header">
-                        <h5 class="card-category">Price Chart</h5>
-                        <h2 class="card-title"></h2>
+                        <h5 class="card-title">System Overview</h5>
                     </div>
                     <div class="card-body">
-                        <div class="chart-area">
-                            <canvas id="predictionChart"></canvas>
+                        <div class="system-info">
+                            <h5>What is This System?</h5>
+                            <p>
+                                Welcome to our prediction system! This system is designed to provide predictions for COPRA PRICE based on historical data and advanced machine learning techniques.
+                            </p>
+                        </div>
+                        <div class="system-info">
+                            <h5>How Does It Work?</h5>
+                            <p>
+                                The system uses historical data of COPRA PRICE and employs a powerful machine learning model called Random Forest Time Series Model to analyze patterns and make predictions.
+                            </p>
+                        </div>
+                        <div class="system-info">
+                            <h5>What Can You Expect?</h5>
+                            <p>
+                                Once you initiate a prediction request, the system processes the data and generates predictions for COPRA PRICE, providing you with valuable insights into future price trends.
+                            </p>
+                        </div>
+                        <div class="system-info">
+                            <h5>How to Use It?</h5>
+                            <p>
+                                To get started, simply input the necessary parameters and submit the prediction request. You'll then receive the predicted COPRA PRICE along with relevant information about the prediction process.
+                            </p>
+                        </div>
+                        <div class="system-info">
+                            <h5>Explore and Enjoy!</h5>
+                            <p>
+                                Feel free to explore the system and analyze the prediction results. We hope this tool proves to be insightful and valuable for your needs.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -36,97 +65,10 @@
 
 {% endblock content %}
 
-<!-- Include Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-
-<script>
-    // Function to fetch prediction data from Flask route
-    async function fetchPredictionData() {
-        try {
-            const response = await fetch('/get_prediction_data');
-            if (!response.ok) {
-                throw new Error('Error fetching prediction data');
-            }
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
-    }
-
-    // Function to create and update the chart
-    async function createChart() {
-        try {
-            // Fetch prediction data from Flask route
-            const data = await fetchPredictionData();
-
-            // Chart configuration
-            const chartConfig = {
-                type: 'line',
-                data: {
-                    labels: data.map(entry => entry.DATE),
-                    datasets: [{
-                        label: 'COPRA PRICE',
-                        data: data.map(entry => parseFloat(entry.PRICE)),
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderWidth: 2,
-                        pointRadius: 4,
-                        pointBackgroundColor: 'rgba(75, 192, 192, 1)',
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                unit: 'day',
-                                displayFormats: {
-                                    day: 'MMM D'
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Price (PHP per kg)'
-                            },
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                        }
-                    }
-                }
-            };
-
-            // Get chart canvas and create Chart instance
-            const ctx = document.getElementById('predictionChart').getContext('2d');
-            const myChart = new Chart(ctx, chartConfig);
-
-        } catch (error) {
-            console.error('Error creating chart:', error);
-        }
-    }
-
-    // Call createChart function when the page loads
-    document.addEventListener('DOMContentLoaded', createChart);
-
-</script>
-
+    <!-- Add any specific JavaScript for the result page if needed -->
+    <script>
+        // Add JavaScript code here if necessary
+    </script>
 {% endblock javascripts %}
