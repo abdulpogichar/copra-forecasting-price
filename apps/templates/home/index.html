@@ -7,12 +7,37 @@
 {% block stylesheets %}
     <!-- Add any specific stylesheets for the result page if needed -->
     <style>
-        /* Add custom styles here if necessary */
+        /* Custom styles for the result page */
         .system-info {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center; /* Center-align the content */
         }
         .system-info h5 {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 24px; /* Increase font size for headings */
+            color: #3498db; /* Blue color for headings */
+        }
+        .system-info p {
+            font-size: 18px; /* Increase font size for paragraphs */
+            color: #555; /* Dark gray color for paragraphs */
+        }
+        .system-info img {
+            width: 150px; /* Set width for logos */
+            margin-bottom: 20px;
+        }
+        .card {
+            border: 2px solid #3498db; /* Add border around the card */
+            border-radius: 10px; /* Add border radius to card */
+        }
+        .card-header {
+            background-color: #3498db; /* Blue background color for card header */
+            color: white; /* White text color for card header */
+            border-bottom: none; /* Remove border from card header */
+            border-top-left-radius: 10px; /* Add border radius to top-left corner */
+            border-top-right-radius: 10px; /* Add border radius to top-right corner */
+        }
+        .card-body {
+            padding: 30px; /* Add padding to card body */
         }
     </style>
 {% endblock stylesheets %}
@@ -28,6 +53,7 @@
                     </div>
                     <div class="card-body">
                         <div class="system-info">
+                            <img src="https://c8.alamy.com/comp/2D6FW17/machine-learning-logo-design-vector-illustrations-brain-ai-technology-human-template-2D6FW17.jpg" alt="Machine Learning Logo">
                             <h5>What is This System?</h5>
                             <p>
                                 Welcome to our prediction system! This system is designed to provide predictions for COPRA PRICE based on historical data and advanced machine learning techniques.
@@ -37,6 +63,10 @@
                             <h5>How Does It Work?</h5>
                             <p>
                                 The system uses historical data of COPRA PRICE and employs a powerful machine learning model called Random Forest Time Series Model to analyze patterns and make predictions.
+                            </p>
+                            <img src="{{ url_for('static', filename='images/random_forest_logo.png') }}" alt="Random Forest Logo">
+                            <p>
+                                Random Forest is an ensemble learning method used for classification and regression tasks. It works by constructing multiple decision trees during training and outputting the mode of the classes (classification) or the mean prediction (regression) of the individual trees.
                             </p>
                         </div>
                         <div class="system-info">
